@@ -1,20 +1,22 @@
 <?php
-require_once dirname(__FILE__).'/lib/limonade.php';
+require_once ('lib/limonade.php');
 
 function configure()
 {
-  option('env', ENV_DEVELOPMENT);
+  $localhost = preg_match('/^localhost(\:\d+)?/', $_SERVER['HTTP_HOST']);
+  $env =  $localhost ? ENV_DEVELOPMENT : ENV_PRODUCTION;
+  option('env', $env);
 }
 
 function before()
 {
-  layout('html_my_layout');
+  layout('layout.html.php');
 }
 
-dispatch('/', 'hello_world');
-  function hello_world()
+dispatch('/', 'home');
+  function home()
   {
-    return "Hello world!";
+    return html('index.html.php');
   }
 
 function after($output)
@@ -26,37 +28,3 @@ function after($output)
 
 
 run();
-
-# HTML Layouts and templates
-
-#WHEEEEEEEE
-
-function html_my_layout($vars){ extract($vars);?> 
-<html>
-<head>
-	<title>Limonde first example</title>
-</head>
-<body>
-  <h1>Limonde first example</h1>
-	<?=$content?>
-	<hr>
-	<a href="<?=url_for('/')?>">Home</a> |
-	<a href="<?=url_for('/hello/', $name)?>">Hello</a> | 
-	<a href="<?=url_for('/welcome/', $name)?>">Welcome !</a> | 
-	<a href="<?=url_for('/are_you_ok/', $name)?>">Are you ok ?</a> | 
-	<a href="<?=url_for('/how_are_you/', $name)?>">How are you ?</a>
-</body>
-</html>
-<?}
-
-function html_welcome($vars){ extract($vars);?> 
-<h3>Hello <?=$name?>!</h3>
-<p><a href="<?=url_for('/how_are_you/', $name)?>">How are you <?=$name?>?</a></p>
-<hr>
-<p><a href="<?=url_for('/images/soda_glass.jpg')?>">
-   <img src="<?=url_for('/soda_glass.jpg/thumb')?>"></a></p>
-<?}
-
-
-
-?>
